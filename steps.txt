@@ -1,0 +1,4 @@
+1) get harddisk info
+2) format hardisk
+3) write filesystem
+4) then load files form filesystem
