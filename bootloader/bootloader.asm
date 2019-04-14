@@ -1,13 +1,19 @@
+ [BITS 16]
  [ORG 0X7C00]
  
  xor ax, ax  ;make it zero
  mov ds, ax
  cld ;clear direction
- 
+ mov ss,ax
+ mov sp, 0x7C00
+ sti
 
  mov si, msg
  call print
+ call reset_disk
+
  call ReadFloppy
+
  ;push DX
  ;call print_hex_word
  ;pop DX
@@ -29,7 +35,9 @@
      
  .data:
      msg db 'Hello world !!!!',13,10,0
-     msg2 db "ERROR IN DISK READING",13,10,0
+     ;msg2 db "ERROR IN DISK READING",13,10,0
+     ;startaddr   EQU  0x7E00
+     ;endaddr EQU 0x7E00
  print:
     lodsb
     or al, al  ;zero=end of str
@@ -72,19 +80,31 @@
     popa            ; Restore all the registers
     ret
 
- 
+ reset_disk:
+    MOV AH, 00h
+    MOV DL, 00h
+    RET
+
  ReadFloppy:
 	
-	MOV AH, 02h
-	MOV AL, 02h
+    ;MOV AX, 0X007E
+	MOV BX, 0X7E00
+    MOV ES, BX
+    MOV BX, 0X00 
+    MOV AH, 02h
+	MOV AL, 01h
 	
 	MOV CX, 0x0002
-	MOV DH, 01h
+	MOV DH, 00h
 	MOV DL, 00h
-	JMP 0x0000:0x7E00
+    
+	
 	;MOV SI,DiskAddressPacket
 	INT 0x13
-	JC ReadFloppy ;if it went wrong, try again
+    push es
+    push bx
+    retf
+	;JC ReadFloppy ;if it went wrong, try again
 	;call print
 	;pointers to RAM position (0x1000)
 	;MOV AX, 0x1000

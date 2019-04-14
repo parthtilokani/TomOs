@@ -1,26 +1,18 @@
-;set print-registers
-MOV AH, 0x0E ;function nr
-MOV BH, 0x00 ;page
-MOV BL, 0x07 ;color
+[org 0x7E000]
+;data: 
+ ;msg db 'Hello world from kernel!!!!',13,10,0
 
-MOV SI, msg ;move msg to SI-pointer
-CALL PrintString ;call function to print SI (msg)
+print:
+    ;lodsb
+    ;or al, al  ;zero=end of str
+    
+    ;jz done    ;get out
+    mov al, 'd'
+    mov ah, 0x0E
+    mov bh, 0
+    int 0x10
+    ;jmp print
+ 
+ done:
+    jmp $
 
-;JMP $ ;hang
-
-PrintString:
-next_char:
-MOV AL, [SI] ;current character
-OR AL, AL
-JZ print_done ;if current char is zero, go to end
-INT 0x10 ;print character
-INC SI ;increase pointer to msg (next character)
-JMP next_char
-exit_char:
-  RET
-
-print_done:
-  RET
-msg db 'Hello world from the kernel!', 13, 10, 0
-
-TIMES 512 - ($ - $$) db 0 ;fill the rest
