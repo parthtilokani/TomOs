@@ -12,7 +12,12 @@
  push si
  call print_hex_word
  pop si
+ push ds
+ call print_hex_word
+ pop ds
+
  call print
+
  call reset_disk
 
  call ReadFloppy
@@ -30,13 +35,13 @@
  ;call disk_read_error
  
  hang:
-    cli
+    ;cli
     ;call load_sector
-    jmp hang
+    ;jmp hang
      
  .data:
      msg db 'Hello world !!!!',13,10,0
-     ;msg2 db "ERROR IN DISK READING",13,10,0
+     msg2 db "ERROR IN DISK READING",13,10,0
      ;startaddr   EQU  0x7E00
      ;endaddr EQU 0x7E00
  print:
@@ -89,7 +94,7 @@
  ReadFloppy:
 	
     ;MOV AX, 0X007E
-	MOV BX, 0X7E00
+	MOV BX, 0X7E0
     MOV ES, BX
     MOV BX, 0X00 
     MOV AH, 02h
@@ -120,12 +125,12 @@
     	;jnc disk_read_error
     	;call 0x00200
     	;hlt
-	ret
- DiskAddressPacket:          db 16,0 
-.SectorsToRead:             dw 1                              ; Number of sectors to read (read size of OS) 
-.Offset:                    dw 0                              ; Offset :0000 
-.Segment:                   dw 0200h                          ; Segment 0200
-.End:                       dq 16                             ; Sector 16 or 10h on CD-ROM 
+	;ret
+; DiskAddressPacket:          db 16,0 
+;.SectorsToRead:             dw 1                              ; Number of sectors to read (read size of OS) 
+;.Offset:                    dw 0                              ; Offset :0000 
+;.Segment:                   dw 0200h                          ; Segment 0200
+;.End:                       dq 16                             ; Sector 16 or 10h on CD-ROM 
 
 
 
