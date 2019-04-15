@@ -9,6 +9,9 @@
  sti
 
  mov si, msg
+ push si
+ call print_hex_word
+ pop si
  call print
  call reset_disk
 
@@ -23,9 +26,7 @@
  ;pushf
  ;call print_hex_word
  ;popf
- push AX
- call print_hex_word
- pop AX
+ 
  ;call disk_read_error
  
  hang:
